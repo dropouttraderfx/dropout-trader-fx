@@ -775,93 +775,350 @@ function setupPortfolio(){
   if(reset) reset.onclick=()=>{ if(confirm('Reset portfolio capital settings and transaction history? Your trades will not be deleted.')){portfolio={startingBalance:0,transactions:[]};savePortfolioState();loadPortfolio();render();} };
 }
 
+async function getSupabaseUser(){
+  const { data: { session }, error } =
+    await supabaseClient.auth.getSession();
+
+  if(error) throw error;
+
+  if(session?.user){
+    return session.user;
+  }
+
+  const { data, error: signInError } =
+    await supabaseClient.auth.signInAnonymously();
+
+  if(signInError) throw signInError;
+
+  return data.user;
+}
+
+function tradeToSupabase(t, userId){
+  return {
+    user_id: userId,
+    local_id: String(t.id),
+    symbol: t.symbol || "",
+    direction: t.direction || "long",
+    trade_date: t.date || new Date().toISOString().slice(0,10),
+    entry_price: Number.isFinite(Number(t.entry)) ? Number(t.entry) : null,
+    exit_price: Number.isFinite(Number(t.exit)) ? Number(t.exit) : null,
+    lot_size: Number.isFinite(Number(t.size)) ? Number(t.size) : null,
+    session: t.session || "",
+    risk: t.risk || "",
+    strategy: t.strategy || "",
+    pnl: Number(t.pnl || 0),
+    notes: t.notes || "",
+    psychology: t.psychology || {},
+    updated_at: new Date().toISOString()
+  };
+}
+
+function supabaseToTrade(row){
+  return {
+    id: row.local_id || row.id,
+    symbol: row.symbol || "",
+    direction: row.direction || "long",
+    date: row.trade_date || "",
+    entry: row.entry_price,
+    exit: row.exit_price,
+    size: row.lot_size,
+    session: row.session || "",
+    risk: row.risk || "",
+    strategy: row.strategy || "",
+    pnl: Number(row.pnl || 0),
+    notes: row.notes || "",
+    psychology: row.psychology || {}
+  };
+}
+
 async function loadTrades(){
   try{
-    // V29 rule: IndexedDB is the primary journal store. LocalStorage is only
-    // a fallback/legacy migration source and can never overwrite a populated DB.
-    let saved = await dbGetAll();
+    const user = await getSupabaseUser();
 
-    if(!saved.length){
-      let localSnapshot = null;
+    const { data: cloudTrades, error } = await supabaseClient
+      .from("journal_trades")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("trade_date", { ascending:false });
+
+    if(error) throw error;
+
+    /*
+      If Supabase is empty but this browser already has trades,
+      migrate those existing trades to Supabase once.
+    */
+    if(!cloudTrades || cloudTrades.length === 0){
+
+      let localTrades = [];
+
       try{
         const raw = localStorage.getItem("trading-journal-trades");
         if(raw){
           const parsed = JSON.parse(raw);
-          if(Array.isArray(parsed) && parsed.length) localSnapshot = parsed;
+          if(Array.isArray(parsed)){
+            localTrades = parsed;
+          }
         }
       }catch(e){}
 
-      if(localSnapshot && localSnapshot.length){
-        saved = localSnapshot;
-        try{ await dbPutAll(saved); }catch(e){}
-      } else {
-        await migrateLegacyStorage();
-        saved = await dbGetAll();
+      if(localTrades.length){
+
+        const rows = localTrades.map(t =>
+          tradeToSupabase(t, user.id)
+        );
+
+        const { error: insertError } =
+          await supabaseClient
+            .from("journal_trades")
+            .upsert(rows, {
+              onConflict:"user_id,local_id"
+            });
+
+        if(insertError) throw insertError;
+
+        trades = localTrades;
+
+      }else{
+        trades = [];
       }
+
+    }else{
+
+      trades = cloudTrades.map(supabaseToTrade);
+
     }
 
-    trades = (Array.isArray(saved) ? saved : []).map(t => {
-      const auto = calculatePnl(t.symbol, t.direction, t.entry, t.exit, t.size);
+    trades = trades.map(t => {
+      const auto = calculatePnl(
+        t.symbol,
+        t.direction,
+        t.entry,
+        t.exit,
+        t.size
+      );
+
       return {
         ...t,
         session:t.session || "",
         psychology:t.psychology || {},
-        pnl:auto !== null ? Number(auto.toFixed(2)) : Number(t.pnl || 0)
+        pnl:auto !== null
+          ? Number(auto.toFixed(2))
+          : Number(t.pnl || 0)
       };
     });
 
-    // Only sync a verified non-empty/empty current journal snapshot after load.
-    try{ localStorage.setItem("trading-journal-trades", JSON.stringify(trades)); }catch(e){}
+    try{
+      localStorage.setItem(
+        "trading-journal-trades",
+        JSON.stringify(trades)
+      );
+    }catch(e){}
+
     hideError();
     updateTopAnalytics();
+
   }catch(e){
+
+    console.error("Supabase load error:", e);
+
     try{
-      const raw = localStorage.getItem("trading-journal-trades");
+      const raw =
+        localStorage.getItem("trading-journal-trades");
+
       const parsed = raw ? JSON.parse(raw) : [];
+
       trades = Array.isArray(parsed) ? parsed : [];
-      hideError();
+
+      showError(
+        "Cloud database connection failed. Showing local trades."
+      );
+
     }catch(e2){
+
       trades = [];
-      showError("Storage could not be opened. Your trades have not been replaced.");
+
+      showError(
+        "Could not load your trading journal."
+      );
     }
   }
+
   render();
 }
+
 
 async function persist(){
+
   try{
-    // Primary durable store.
-    await dbPutAll(trades);
-    // Secondary fallback snapshot.
-    try{ localStorage.setItem("trading-journal-trades", JSON.stringify(trades)); }catch(e){}
-    hideError();
-    return true;
-  }catch(e){
-    try{
-      localStorage.setItem("trading-journal-trades", JSON.stringify(trades));
-      hideError();
-      return true;
-    }catch(e2){
-      showError("Couldn't save the trade. Your browser may be blocking site storage.");
-      return false;
+
+    const user = await getSupabaseUser();
+
+    /*
+      Save the current journal to Supabase.
+    */
+
+    const rows = trades.map(t =>
+      tradeToSupabase(t, user.id)
+    );
+
+    /*
+      If all trades were deleted, remove all cloud trades
+      belonging to this user.
+    */
+    if(rows.length === 0){
+
+      const { error: deleteAllError } =
+        await supabaseClient
+          .from("journal_trades")
+          .delete()
+          .eq("user_id", user.id);
+
+      if(deleteAllError) throw deleteAllError;
+
+    }else{
+
+      /*
+        Delete cloud trades that no longer exist locally.
+      */
+      const { data: existingRows, error: existingError } =
+        await supabaseClient
+          .from("journal_trades")
+          .select("id,local_id")
+          .eq("user_id", user.id);
+
+      if(existingError) throw existingError;
+
+      const currentIds =
+        new Set(trades.map(t => String(t.id)));
+
+      const idsToDelete =
+        (existingRows || [])
+          .filter(row =>
+            !currentIds.has(String(row.local_id))
+          )
+          .map(row => row.id);
+
+      if(idsToDelete.length){
+
+        const { error: deleteError } =
+          await supabaseClient
+            .from("journal_trades")
+            .delete()
+            .in("id", idsToDelete);
+
+        if(deleteError) throw deleteError;
+      }
+
+      /*
+        Insert new trades or update existing ones.
+      */
+      const { error: upsertError } =
+        await supabaseClient
+          .from("journal_trades")
+          .upsert(rows, {
+            onConflict:"user_id,local_id"
+          });
+
+      if(upsertError) throw upsertError;
     }
+
+    /*
+      Keep local backup as well.
+    */
+    try{
+      localStorage.setItem(
+        "trading-journal-trades",
+        JSON.stringify(trades)
+      );
+    }catch(e){}
+
+    hideError();
+
+    return true;
+
+  }catch(e){
+
+    console.error("Supabase save error:", e);
+
+    showError(
+      "Couldn't save to the cloud. Please check your connection."
+    );
+
+    return false;
   }
 }
 
-function showError(msg){ const el = $("#errorMsg"); el.textContent = msg; el.style.display = "block"; }
-function hideError(){ $("#errorMsg").style.display = "none"; }
 
 async function saveTrade(t){
-  const auto = calculatePnl(t.symbol, t.direction, t.entry, t.exit, t.size);
-  const normalized = {...t, session:t.session || "", psychology:t.psychology || {}, pnl:auto !== null ? Number(auto.toFixed(2)) : Number(t.pnl || 0)};
-  const exists = trades.some(x => x.id === normalized.id);
-  if(exists) trades = trades.map(x => x.id === normalized.id ? normalized : x);
-  else trades = [normalized, ...trades];
+
+  const auto = calculatePnl(
+    t.symbol,
+    t.direction,
+    t.entry,
+    t.exit,
+    t.size
+  );
+
+  const normalized = {
+    ...t,
+    session:t.session || "",
+    psychology:t.psychology || {},
+    pnl:auto !== null
+      ? Number(auto.toFixed(2))
+      : Number(t.pnl || 0)
+  };
+
+  const exists =
+    trades.some(x => x.id === normalized.id);
+
+  if(exists){
+
+    trades = trades.map(x =>
+      x.id === normalized.id
+        ? normalized
+        : x
+    );
+
+  }else{
+
+    trades = [
+      normalized,
+      ...trades
+    ];
+  }
+
   const ok = await persist();
+
   if(!ok) return;
+
   showNewForm = false;
   editingId = null;
+
   render();
+}
+
+
+async function deleteTrade(id){
+
+  const trade =
+    trades.find(x => x.id === id);
+
+  if(!trade) return;
+
+  const ok = confirm(
+    `Delete ${trade.symbol || "this trade"} (${fmtMoney(trade.pnl)})?`
+  );
+
+  if(!ok) return;
+
+  trades =
+    trades.filter(x => x.id !== id);
+
+  const saved = await persist();
+
+  if(saved){
+    render();
+  }
 }
 async function deleteTrade(id){
   const trade = trades.find(x => x.id === id);
