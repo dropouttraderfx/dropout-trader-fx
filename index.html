@@ -403,6 +403,17 @@ body > * { position:relative; z-index:1; }
   body::before { background-position:center top; background-size:auto 100%; opacity:.60; }
 }
 </style>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://zncmyjndezwavyjiaofx.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_JuGCpQ28pPwwWGNcWAegWA_DXHOfkL5";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+</script>
 </head>
 <body>
 <div class="wrap">
