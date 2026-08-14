@@ -1595,7 +1595,7 @@ function applyViewVisibility(){
 function setView(view){
   currentView=view; document.body.dataset.view=view; localStorage.setItem("journal-view",view);
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active", b.dataset.view===view));
-  if(view==="journal"){ showNewForm=false; editingId=null; }
+  if(view!=="journal"){ showNewForm=false; editingId=null; }
   updateTopAnalytics();
   render();
 }
@@ -1810,25 +1810,6 @@ loadTrades();
   line.textContent=lines[idx%lines.length];
 })();
 </script>
-<button class="fab-add" id="fabAdd" type="button" aria-label="Add trade" onclick="(function(){var j=document.querySelector('[data-view=\"journal\"]');if(j)j.click();setTimeout(function(){var n=document.getElementById('newBtn');if(n)n.click();},80);})()">+</button>
-<script>
-(function(){
-  function hardBindFab(){
-    var b=document.getElementById('fabAdd');
-    if(!b || b.dataset.hardBound==='1') return;
-    b.dataset.hardBound='1';
-    b.addEventListener('pointerup',function(e){
-      if(e.pointerType==='touch' || e.pointerType==='pen'){
-        e.preventDefault();
-        var j=document.querySelector('[data-view="journal"]');
-        if(j) j.click();
-        setTimeout(function(){var n=document.getElementById('newBtn');if(n)n.click();},80);
-      }
-    },{passive:false});
-  }
-  hardBindFab();
-  document.addEventListener('DOMContentLoaded',hardBindFab);
-})();
-</script>
-<div style="position:fixed;left:-9999px;top:-9999px">V29 Clean Psychology</div></body>
+<button class="fab-add" id="fabAdd" type="button" aria-label="Add trade">+</button>
+</body>
 </html>
