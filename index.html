@@ -354,15 +354,8 @@ header.head{background:linear-gradient(135deg,#101722 0%,#0a0f15 55%,#0d141d 100
   .portfolio-home-card .ph-sub{font-size:9px;color:#5e6b79;margin-top:4px}
   @media(max-width:760px){.portfolio-home-strip{grid-template-columns:1fr 1fr}.portfolio-home-card:first-child{grid-column:1/-1}}
 
-<style>
-/* V29 psychology add-on: isolated from the core journal UI */
-.psych-box{grid-column:1/-1;border:1px solid rgba(214,169,76,.28);border-radius:14px;padding:14px;background:rgba(214,169,76,.055);margin-top:2px}
-.psych-title{font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-size:11px;color:#d8b45c;margin-bottom:10px}
-.psych-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.psych-grid .field{margin:0}
-.psych-hint{font-size:11px;color:var(--muted);margin-top:4px}
-@media(max-width:680px){.psych-grid{grid-template-columns:1fr}}
-</style>
+/* Trading Psychology */
+.psych-box{grid-column:1/-1;border:1px solid rgba(214,169,76,.28);border-radius:14px;padding:14px;background:rgba(214,169,76,.055);margin-top:2px}.psych-title{font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-size:11px;color:#d8b45c;margin-bottom:10px}.psych-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.psych-grid .field{margin:0}.psych-hint{font-size:11px;color:var(--muted);margin-top:4px}@media(max-width:680px){.psych-grid{grid-template-columns:1fr}}
 </style>
 
 <style id="v8-nav-fix">
@@ -403,19 +396,98 @@ body > * { position:relative; z-index:1; }
   body::before { background-position:center top; background-size:auto 100%; opacity:.60; }
 }
 </style>
-</script>
+
+<style id="v23-spartan-desktop-size-fix">
+/* V23 Spartan background: smaller and subtler on desktop */
+@media (min-width: 701px) {
+  body::before {
+    background-size: auto 72vh !important;
+    background-position: center 24% !important;
+    opacity: .38 !important;
+  }
+}
+@media (min-width: 1200px) {
+  body::before {
+    background-size: auto 68vh !important;
+    opacity: .34 !important;
+  }
+}
+@media (max-width: 700px) {
+  body::before {
+    background-size: auto 100% !important;
+    background-position: center top !important;
+    opacity: .60 !important;
+  }
+}
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://zncmyjndezwavyjiaofx.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_JuGCpQ28pPwwWGNcWAegWA_DXHOfkL5";
-
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+  const SUPABASE_URL = "https://zncmyjndezwavyjiaofx.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_JuGCpQ28pPwwWGNcWAegWA_DXHOfkL5";
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY,
+    { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
+  );
 </script>
+
+
+<style id="static-cloud-auth">
+.auth-gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,8,12,.94);backdrop-filter:blur(12px)}
+.auth-card{width:min(430px,100%);padding:30px;border:1px solid rgba(216,180,91,.28);border-radius:22px;background:linear-gradient(145deg,rgba(18,23,31,.98),rgba(8,12,17,.98));box-shadow:0 28px 80px rgba(0,0,0,.55);text-align:center}
+.auth-brand{font:700 13px/1.2 "IBM Plex Mono",monospace;letter-spacing:.16em;color:#d8b45b}
+.auth-brand span{color:#f0d889}
+.auth-spartan-mark{font-size:42px;color:#d8b45b;margin:14px 0 4px;opacity:.72}
+.auth-card h2{margin:4px 0 8px;color:#f3efe5;font-size:25px}
+.auth-card p{margin:0 auto 22px;color:#8e99a7;font-size:13px;line-height:1.55;max-width:340px}
+.auth-form{text-align:left}
+.auth-field{margin:0 0 13px}
+.auth-field label{display:block;margin:0 0 6px;color:#9ea8b5;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.auth-field input{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.10);border-radius:10px;background:#0c1118;color:#f5f2e9;padding:12px 13px;outline:none}
+.auth-field input:focus{border-color:rgba(216,180,91,.65);box-shadow:0 0 0 3px rgba(216,180,91,.08)}
+.auth-submit{width:100%;margin-top:4px}
+.auth-link{display:block;width:100%;border:0;background:none;color:#d8b45b;margin-top:13px;cursor:pointer;font-size:12px}
+.auth-message{min-height:18px;margin-top:12px;text-align:center;color:#9ea8b5;font-size:11px;line-height:1.45}
+.auth-message.error{color:#d88d82}
+.auth-message.ok{color:#75b68c}
+.auth-profile{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.auth-profile-meta{min-width:0}
+.auth-profile-name{color:#f3efe5;font-weight:700}
+.auth-profile-email{color:#778291;font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
+.auth-logout{white-space:nowrap}
+</style>
+
 </head>
 <body>
+
+<div id="authGate" class="auth-gate">
+  <div class="auth-card">
+    <div class="auth-brand">THE DROPOUT TRADER <span>FX</span></div>
+    <div class="auth-spartan-mark">♜</div>
+    <h2 id="authTitle">Your trading journal</h2>
+    <p id="authSubtitle">Sign in to keep your trades, psychology and P&amp;L synced across devices.</p>
+
+    <form id="authForm" class="auth-form">
+      <div class="auth-field" id="authNameWrap" style="display:none;">
+        <label>Profile name</label>
+        <input id="authName" type="text" autocomplete="name" placeholder="Your name">
+      </div>
+      <div class="auth-field">
+        <label>Email</label>
+        <input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input id="authPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters" minlength="6" required>
+      </div>
+      <button id="authSubmit" class="btn btn-primary auth-submit" type="submit">Sign in</button>
+      <button id="authModeToggle" class="auth-link" type="button">Create a profile</button>
+      <div id="authMessage" class="auth-message" role="status"></div>
+    </form>
+  </div>
+</div>
+
 <div class="wrap">
   <header class="head">
     <div class="brand-row">
@@ -566,8 +638,14 @@ const supabaseClient = window.supabase.createClient(
   <div id="settingsView" class="app-section view-settings">
     <h2 class="page-title">More</h2>
     <p class="page-sub">Tools for managing your journal.</p>
+
+    <div class="settings-card">
+      <h3>Profile &amp; Cloud Sync</h3>
+      <div id="profileCardContent"></div>
+    </div>
+
     <div class="settings-card"><h3>Backup</h3><p>Use Export Backup regularly to keep a copy of all your trades.</p></div>
-    <div class="settings-card"><h3>Data</h3><p>Your trades and portfolio capital movements are stored locally on this device. Backups now include both trades and portfolio data. We will move the same data to Supabase when we deploy.</p></div>
+    <div class="settings-card"><h3>Data</h3><p>Your profile, trades, psychology notes and portfolio data are synced to your private cloud account. You can sign in from another device to continue where you left off.</p></div>
     <div class="settings-card"><h3>Trading setup</h3><p>Sessions, lot presets and automatic P&amp;L calculations are built into the journal.</p></div>
   </div>
 
@@ -611,7 +689,317 @@ const supabaseClient = window.supabase.createClient(
 </div>
 
 <script>
-const SEED = [];
+
+let currentUser = null;
+let authMode = "signin";
+
+function authMessage(msg, type=""){
+  const el = document.getElementById("authMessage");
+  if(!el) return;
+  el.textContent = msg || "";
+  el.className = "auth-message" + (type ? " " + type : "");
+}
+
+function setAuthMode(mode){
+  authMode = mode;
+  const signup = mode === "signup";
+  const title = document.getElementById("authTitle");
+  const subtitle = document.getElementById("authSubtitle");
+  const submit = document.getElementById("authSubmit");
+  const toggle = document.getElementById("authModeToggle");
+  const nameWrap = document.getElementById("authNameWrap");
+  if(title) title.textContent = signup ? "Create your trading profile" : "Your trading journal";
+  if(subtitle) subtitle.textContent = signup
+    ? "Create one profile and your journal will follow you across devices."
+    : "Sign in to keep your trades, psychology and P&L synced across devices.";
+  if(submit) submit.textContent = signup ? "Create profile" : "Sign in";
+  if(toggle) toggle.textContent = signup ? "Already have a profile? Sign in" : "Create a profile";
+  if(nameWrap) nameWrap.style.display = signup ? "" : "none";
+  authMessage("");
+}
+
+async function ensureProfile(user, displayName){
+  const payload = {
+    id: user.id,
+    display_name: (displayName || user.user_metadata?.display_name || user.email?.split("@")[0] || "Trader").trim()
+  };
+  const { error } = await supabaseClient.from("profiles").upsert(payload, { onConflict:"id" });
+  if(error) throw error;
+  return payload;
+}
+
+async function cloudPortfolioLoad(userId){
+  const { data, error } = await supabaseClient
+    .from("portfolio_state")
+    .select("starting_balance,transactions")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if(error) throw error;
+  if(data){
+    portfolio = {
+      startingBalance: Number(data.starting_balance || 0),
+      transactions: Array.isArray(data.transactions) ? data.transactions : []
+    };
+  }else{
+    portfolio = {startingBalance:0, transactions:[]};
+  }
+  loadPortfolio();
+}
+
+async function cloudPortfolioSave(userId){
+  const { error } = await supabaseClient
+    .from("portfolio_state")
+    .upsert({
+      user_id:userId,
+      starting_balance:Number(portfolio.startingBalance || 0),
+      transactions:Array.isArray(portfolio.transactions) ? portfolio.transactions : [],
+      updated_at:new Date().toISOString()
+    }, {onConflict:"user_id"});
+  if(error) throw error;
+}
+
+function showAuthGate(show){
+  const gate = document.getElementById("authGate");
+  if(gate) gate.style.display = show ? "flex" : "none";
+}
+
+function renderProfileCard(){
+  const box = document.getElementById("profileCardContent");
+  if(!box) return;
+  if(!currentUser){
+    box.innerHTML = '<div class="meta">Not signed in.</div>';
+    return;
+  }
+  const name = currentUser.user_metadata?.display_name || currentUser.email?.split("@")[0] || "Trader";
+  box.innerHTML = `
+    <div class="auth-profile">
+      <div class="auth-profile-meta">
+        <div class="auth-profile-name">${esc(name)}</div>
+        <div class="auth-profile-email">${esc(currentUser.email || "")}</div>
+      </div>
+      <button type="button" class="btn-ghost auth-logout" id="logoutBtn">Sign out</button>
+    </div>`;
+  document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+    await supabaseClient.auth.signOut();
+    location.reload();
+  });
+}
+
+async function migrateLocalDataToCloud(userId, cloudRows){
+  if(cloudRows && cloudRows.length) return;
+  let local = [];
+  try{
+    const raw = localStorage.getItem("trading-journal-trades");
+    const parsed = raw ? JSON.parse(raw) : [];
+    if(Array.isArray(parsed)) local = parsed;
+  }catch(e){}
+  if(!local.length) return;
+
+  const rows = local.map(t => ({
+    user_id:userId,
+    local_id:String(t.id),
+    symbol:t.symbol || "",
+    direction:t.direction || "long",
+    trade_date:t.date || new Date().toISOString().slice(0,10),
+    entry_price:t.entry===""||t.entry==null?null:Number(t.entry),
+    exit_price:t.exit===""||t.exit==null?null:Number(t.exit),
+    lot_size:t.size===""||t.size==null?null:Number(t.size),
+    session:t.session || "",
+    risk:t.risk || "",
+    strategy:t.strategy || "",
+    pnl:Number(t.pnl || 0),
+    notes:t.notes || "",
+    psychology:t.psychology || {},
+    updated_at:new Date().toISOString()
+  }));
+  const { error } = await supabaseClient.from("journal_trades").upsert(rows,{onConflict:"user_id,local_id"});
+  if(error) throw error;
+}
+
+function rowToTrade(r){
+  return {
+    id:r.local_id || r.id,
+    symbol:r.symbol || "",
+    direction:r.direction || "long",
+    date:r.trade_date || "",
+    entry:r.entry_price ?? "",
+    exit:r.exit_price ?? "",
+    size:r.lot_size ?? "",
+    session:r.session || "",
+    risk:r.risk || "",
+    strategy:r.strategy || "",
+    pnl:Number(r.pnl || 0),
+    notes:r.notes || "",
+    psychology:r.psychology || {}
+  };
+}
+
+function tradeToRow(t, userId){
+  return {
+    user_id:userId,
+    local_id:String(t.id),
+    symbol:t.symbol || "",
+    direction:t.direction || "long",
+    trade_date:t.date || new Date().toISOString().slice(0,10),
+    entry_price:t.entry===""||t.entry==null?null:Number(t.entry),
+    exit_price:t.exit===""||t.exit==null?null:Number(t.exit),
+    lot_size:t.size===""||t.size==null?null:Number(t.size),
+    session:t.session || "",
+    risk:t.risk || "",
+    strategy:t.strategy || "",
+    pnl:Number(t.pnl || 0),
+    notes:t.notes || "",
+    psychology:t.psychology || {},
+    updated_at:new Date().toISOString()
+  };
+}
+
+async function bootCloudSession(){
+  const { data:{session}, error } = await supabaseClient.auth.getSession();
+  if(error) throw error;
+  if(!session?.user){
+    showAuthGate(true);
+    return false;
+  }
+  currentUser = session.user;
+  showAuthGate(false);
+  renderProfileCard();
+  return true;
+}
+
+async function handleAuthSubmit(e){
+  e.preventDefault();
+  authMessage("Working…");
+  const email = document.getElementById("authEmail")?.value.trim();
+  const password = document.getElementById("authPassword")?.value;
+  const name = document.getElementById("authName")?.value.trim();
+
+  try{
+    if(authMode === "signup"){
+      const redirectUrl = window.location.origin + window.location.pathname;
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options:{
+          data:{display_name:name || email.split("@")[0]},
+          emailRedirectTo: redirectUrl
+        }
+      });
+      if(error) throw error;
+      if(data.session?.user){
+        currentUser = data.session.user;
+        await ensureProfile(currentUser, name);
+        authMessage("Profile created.", "ok");
+        showAuthGate(false);
+        await startCloudJournal();
+      }else{
+        authMessage("Profile created. Check your email and click the confirmation link. You will be returned to this website automatically.", "ok");
+        setAuthMode("signin");
+      }
+    }else{
+      const { data, error } = await supabaseClient.auth.signInWithPassword({email,password});
+      if(error) throw error;
+      currentUser = data.user;
+      await ensureProfile(currentUser);
+      authMessage("");
+      showAuthGate(false);
+      await startCloudJournal();
+    }
+  }catch(err){
+    console.error(err);
+    authMessage(err.message || "Could not complete that action.", "error");
+  }
+}
+
+async function startCloudJournal(){
+  await cloudPortfolioLoad(currentUser.id);
+  await loadTrades();
+}
+
+async function loadTrades(){
+  if(!currentUser){
+    trades = [];
+    render();
+    return;
+  }
+  try{
+    const { data, error } = await supabaseClient
+      .from("journal_trades")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .order("trade_date",{ascending:false})
+      .order("created_at",{ascending:false});
+    if(error) throw error;
+
+    await migrateLocalDataToCloud(currentUser.id, data || []);
+
+    let rows = data || [];
+    if(!rows.length){
+      const { data: refreshed, error: refreshError } = await supabaseClient
+        .from("journal_trades")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .order("trade_date",{ascending:false});
+      if(refreshError) throw refreshError;
+      rows = refreshed || [];
+    }
+
+    trades = rows.map(rowToTrade).map(t => {
+      const auto = calculatePnl(t.symbol,t.direction,t.entry,t.exit,t.size);
+      return {...t,session:t.session||"",pnl:auto!==null?Number(auto.toFixed(2)):Number(t.pnl||0)};
+    });
+
+    try{ localStorage.setItem("trading-journal-trades",JSON.stringify(trades)); }catch(e){}
+    hideError();
+    updateTopAnalytics();
+    render();
+  }catch(e){
+    console.error(e);
+    showError("Cloud sync failed. Check your connection and try again.");
+    trades = [];
+    render();
+  }
+}
+
+async function persist(){
+  if(!currentUser) return false;
+  try{
+    const { data: existing, error: existingError } = await supabaseClient
+      .from("journal_trades")
+      .select("id,local_id")
+      .eq("user_id",currentUser.id);
+    if(existingError) throw existingError;
+
+    const currentIds = new Set(trades.map(t=>String(t.id)));
+    const removeIds = (existing||[])
+      .filter(r=>!currentIds.has(String(r.local_id)))
+      .map(r=>r.id);
+
+    if(removeIds.length){
+      const { error } = await supabaseClient.from("journal_trades").delete().in("id",removeIds);
+      if(error) throw error;
+    }
+
+    if(trades.length){
+      const { error } = await supabaseClient
+        .from("journal_trades")
+        .upsert(trades.map(t=>tradeToRow(t,currentUser.id)),{onConflict:"user_id,local_id"});
+      if(error) throw error;
+    }
+
+    try{ localStorage.setItem("trading-journal-trades",JSON.stringify(trades)); }catch(e){}
+    hideError();
+    return true;
+  }catch(e){
+    console.error(e);
+    showError("Couldn't save to your cloud profile. Nothing was deleted locally.");
+    return false;
+  }
+}
+
+const SEED = [
+  { id: "seed-1", symbol: "XAU/USD", direction: "long", entry: 4384.55, exit: 4399.7, size: 1, date: "2026-08-13", session: "New York", strategy: "News", risk: "", notes: "Loved this Trade", pnl: 15.15 }
+];
 
 let trades = null;
 let portfolio = { startingBalance: 0, transactions: [] };
@@ -767,358 +1155,110 @@ function setupPortfolio(){
     const a=Number(amount?.value||0);
     if(a>0){ portfolio.transactions.push({id:uid(),type:type?.value==='withdrawal'?'withdrawal':'deposit',amount:a,date:date?.value||new Date().toISOString().slice(0,10),note:note?.value?.trim()||''}); }
     savePortfolioState();
-    if(amount) amount.value=''; if(note) note.value='';
-    render();
-    alert('Portfolio saved.');
+    if(currentUser){
+      cloudPortfolioSave(currentUser.id)
+        .then(()=>{ if(amount) amount.value=''; if(note) note.value=''; render(); alert('Portfolio saved to your profile.'); })
+        .catch(err=>{ console.error(err); showError('Portfolio could not be synced to the cloud.'); });
+    }else{
+      if(amount) amount.value=''; if(note) note.value='';
+      render();
+    }
   };
   const reset=document.getElementById('resetPortfolioBtn');
-  if(reset) reset.onclick=()=>{ if(confirm('Reset portfolio capital settings and transaction history? Your trades will not be deleted.')){portfolio={startingBalance:0,transactions:[]};savePortfolioState();loadPortfolio();render();} };
-}
-
-async function getSupabaseUser(){
-  const { data: { session }, error } =
-    await supabaseClient.auth.getSession();
-
-  if(error) throw error;
-
-  if(session?.user){
-    return session.user;
-  }
-
-  const { data, error: signInError } =
-    await supabaseClient.auth.signInAnonymously();
-
-  if(signInError) throw signInError;
-
-  return data.user;
-}
-
-function tradeToSupabase(t, userId){
-  return {
-    user_id: userId,
-    local_id: String(t.id),
-    symbol: t.symbol || "",
-    direction: t.direction || "long",
-    trade_date: t.date || new Date().toISOString().slice(0,10),
-    entry_price: Number.isFinite(Number(t.entry)) ? Number(t.entry) : null,
-    exit_price: Number.isFinite(Number(t.exit)) ? Number(t.exit) : null,
-    lot_size: Number.isFinite(Number(t.size)) ? Number(t.size) : null,
-    session: t.session || "",
-    risk: t.risk || "",
-    strategy: t.strategy || "",
-    pnl: Number(t.pnl || 0),
-    notes: t.notes || "",
-    psychology: t.psychology || {},
-    updated_at: new Date().toISOString()
-  };
-}
-
-function supabaseToTrade(row){
-  return {
-    id: row.local_id || row.id,
-    symbol: row.symbol || "",
-    direction: row.direction || "long",
-    date: row.trade_date || "",
-    entry: row.entry_price,
-    exit: row.exit_price,
-    size: row.lot_size,
-    session: row.session || "",
-    risk: row.risk || "",
-    strategy: row.strategy || "",
-    pnl: Number(row.pnl || 0),
-    notes: row.notes || "",
-    psychology: row.psychology || {}
+  if(reset) reset.onclick=async()=>{ 
+    if(!confirm('Reset portfolio capital settings and transaction history? Your trades will not be deleted.')) return;
+    portfolio={startingBalance:0,transactions:[]};
+    savePortfolioState();
+    try{
+      if(currentUser) await cloudPortfolioSave(currentUser.id);
+      loadPortfolio(); render();
+    }catch(e){ console.error(e); showError('Portfolio reset could not be synced.'); }
   };
 }
 
 async function loadTrades(){
   try{
-    const user = await getSupabaseUser();
-
-    const { data: cloudTrades, error } = await supabaseClient
-      .from("journal_trades")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("trade_date", { ascending:false });
-
-    if(error) throw error;
-
-    /*
-      If Supabase is empty but this browser already has trades,
-      migrate those existing trades to Supabase once.
-    */
-    if(!cloudTrades || cloudTrades.length === 0){
-
-      let localTrades = [];
-
-      try{
-        const raw = localStorage.getItem("trading-journal-trades");
-        if(raw){
-          const parsed = JSON.parse(raw);
-          if(Array.isArray(parsed)){
-            localTrades = parsed;
-          }
-        }
-      }catch(e){}
-
-      if(localTrades.length){
-
-        const rows = localTrades.map(t =>
-          tradeToSupabase(t, user.id)
-        );
-
-        const { error: insertError } =
-          await supabaseClient
-            .from("journal_trades")
-            .upsert(rows, {
-              onConflict:"user_id,local_id"
-            });
-
-        if(insertError) throw insertError;
-
-        trades = localTrades;
-
-      }else{
-        trades = [];
-      }
-
-    }else{
-
-      trades = cloudTrades.map(supabaseToTrade);
-
-    }
-
-    trades = trades.map(t => {
-      const auto = calculatePnl(
-        t.symbol,
-        t.direction,
-        t.entry,
-        t.exit,
-        t.size
-      );
-
-      return {
-        ...t,
-        session:t.session || "",
-        psychology:t.psychology || {},
-        pnl:auto !== null
-          ? Number(auto.toFixed(2))
-          : Number(t.pnl || 0)
-      };
-    });
-
+    // Prefer the latest local journal snapshot when available. Older versions
+    // could leave deleted IndexedDB records behind, so localStorage is used
+    // as the authoritative snapshot and then synced back to IndexedDB.
+    let localSnapshot = null;
     try{
-      localStorage.setItem(
-        "trading-journal-trades",
-        JSON.stringify(trades)
-      );
+      const raw = localStorage.getItem("trading-journal-trades");
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(Array.isArray(parsed)) localSnapshot = parsed;
+      }
     }catch(e){}
 
+    let saved = localSnapshot || await dbGetAll();
+    if(!saved.length){
+      await migrateLegacyStorage();
+      saved = await dbGetAll();
+    }
+    if(saved.length){
+      // Recalculate P&L for every supported trade when the journal opens.
+      trades = saved.map(t => {
+        const auto = calculatePnl(t.symbol, t.direction, t.entry, t.exit, t.size);
+        return {...t, session:t.session || "", pnl:auto !== null ? Number(auto.toFixed(2)) : Number(t.pnl || 0)};
+      });
+      await dbPutAll(trades);
+      try{ localStorage.setItem("trading-journal-trades", JSON.stringify(trades)); }catch(e){}
+    } else {
+      trades = SEED.map(t => ({...t, session:t.session || ""}));
+      await dbPutAll(trades);
+      try{ localStorage.setItem("trading-journal-trades", JSON.stringify(trades)); }catch(e){}
+    }
     hideError();
     updateTopAnalytics();
-
   }catch(e){
-
-    console.error("Supabase load error:", e);
-
     try{
-      const raw =
-        localStorage.getItem("trading-journal-trades");
-
-      const parsed = raw ? JSON.parse(raw) : [];
-
-      trades = Array.isArray(parsed) ? parsed : [];
-
-      showError(
-        "Cloud database connection failed. Showing local trades."
-      );
-
+      const raw = localStorage.getItem("trading-journal-trades");
+      trades = raw ? JSON.parse(raw) : SEED.map(t => ({...t, session:t.session || ""}));
+      trades = trades.map(t => {
+        const auto = calculatePnl(t.symbol, t.direction, t.entry, t.exit, t.size);
+        return {...t, session:t.session || "", pnl:auto !== null ? Number(auto.toFixed(2)) : Number(t.pnl || 0)};
+      });
+      localStorage.setItem("trading-journal-trades", JSON.stringify(trades));
+      hideError();
     }catch(e2){
-
-      trades = [];
-
-      showError(
-        "Could not load your trading journal."
-      );
+      trades = SEED.map(t => ({...t, session:t.session || ""}));
+      showError("Database could not be opened. Your browser may be blocking site storage.");
     }
   }
-
   render();
 }
-
 
 async function persist(){
-
   try{
-
-    const user = await getSupabaseUser();
-
-    /*
-      Save the current journal to Supabase.
-    */
-
-    const rows = trades.map(t =>
-      tradeToSupabase(t, user.id)
-    );
-
-    /*
-      If all trades were deleted, remove all cloud trades
-      belonging to this user.
-    */
-    if(rows.length === 0){
-
-      const { error: deleteAllError } =
-        await supabaseClient
-          .from("journal_trades")
-          .delete()
-          .eq("user_id", user.id);
-
-      if(deleteAllError) throw deleteAllError;
-
-    }else{
-
-      /*
-        Delete cloud trades that no longer exist locally.
-      */
-      const { data: existingRows, error: existingError } =
-        await supabaseClient
-          .from("journal_trades")
-          .select("id,local_id")
-          .eq("user_id", user.id);
-
-      if(existingError) throw existingError;
-
-      const currentIds =
-        new Set(trades.map(t => String(t.id)));
-
-      const idsToDelete =
-        (existingRows || [])
-          .filter(row =>
-            !currentIds.has(String(row.local_id))
-          )
-          .map(row => row.id);
-
-      if(idsToDelete.length){
-
-        const { error: deleteError } =
-          await supabaseClient
-            .from("journal_trades")
-            .delete()
-            .in("id", idsToDelete);
-
-        if(deleteError) throw deleteError;
-      }
-
-      /*
-        Insert new trades or update existing ones.
-      */
-      const { error: upsertError } =
-        await supabaseClient
-          .from("journal_trades")
-          .upsert(rows, {
-            onConflict:"user_id,local_id"
-          });
-
-      if(upsertError) throw upsertError;
-    }
-
-    /*
-      Keep local backup as well.
-    */
-    try{
-      localStorage.setItem(
-        "trading-journal-trades",
-        JSON.stringify(trades)
-      );
-    }catch(e){}
-
+    await dbPutAll(trades);
+    try{ localStorage.setItem("trading-journal-trades", JSON.stringify(trades)); }catch(e){}
     hideError();
-
     return true;
-
   }catch(e){
-
-    console.error("Supabase save error:", e);
-
-    showError(
-      "Couldn't save to the cloud. Please check your connection."
-    );
-
-    return false;
+    try{
+      localStorage.setItem("trading-journal-trades", JSON.stringify(trades));
+      hideError();
+      return true;
+    }catch(e2){
+      showError("Couldn't save the trade. Your browser may be blocking site storage.");
+      return false;
+    }
   }
 }
-
+function showError(msg){ const el = $("#errorMsg"); el.textContent = msg; el.style.display = "block"; }
+function hideError(){ $("#errorMsg").style.display = "none"; }
 
 async function saveTrade(t){
-
-  const auto = calculatePnl(
-    t.symbol,
-    t.direction,
-    t.entry,
-    t.exit,
-    t.size
-  );
-
-  const normalized = {
-    ...t,
-    session:t.session || "",
-    psychology:t.psychology || {},
-    pnl:auto !== null
-      ? Number(auto.toFixed(2))
-      : Number(t.pnl || 0)
-  };
-
-  const exists =
-    trades.some(x => x.id === normalized.id);
-
-  if(exists){
-
-    trades = trades.map(x =>
-      x.id === normalized.id
-        ? normalized
-        : x
-    );
-
-  }else{
-
-    trades = [
-      normalized,
-      ...trades
-    ];
-  }
-
+  const auto = calculatePnl(t.symbol, t.direction, t.entry, t.exit, t.size);
+  const normalized = {...t, session:t.session || "", psychology:t.psychology || {}, pnl:auto !== null ? Number(auto.toFixed(2)) : Number(t.pnl || 0)};
+  const exists = trades.some(x => x.id === normalized.id);
+  if(exists) trades = trades.map(x => x.id === normalized.id ? normalized : x);
+  else trades = [normalized, ...trades];
   const ok = await persist();
-
   if(!ok) return;
-
   showNewForm = false;
   editingId = null;
-
   render();
-}
-
-
-async function deleteTrade(id){
-
-  const trade =
-    trades.find(x => x.id === id);
-
-  if(!trade) return;
-
-  const ok = confirm(
-    `Delete ${trade.symbol || "this trade"} (${fmtMoney(trade.pnl)})?`
-  );
-
-  if(!ok) return;
-
-  trades =
-    trades.filter(x => x.id !== id);
-
-  const saved = await persist();
-
-  if(saved){
-    render();
-  }
 }
 async function deleteTrade(id){
   const trade = trades.find(x => x.id === id);
@@ -1315,47 +1455,20 @@ function updateAutoPnl(form){
 
 function fieldsTemplate(t){
   const v = t || {symbol:"",direction:"long",entry:"",exit:"",size:"",date:"",session:"",strategy:"",risk:"",notes:"",pnl:"",
-    psychology:{emotionBefore:"",emotionAfter:"",fomo:false,revenge:false,planFollowed:false,slDefined:false,reason:"",review:""}};
+    psychology:{emotionBefore:"",emotionAfter:"",fomo:false,revenge:false,planFollowed:"",slDefined:"",reason:"",review:""}};
   return `
     <div class="grid-form">
       <div class="field span2"><label>Symbol / Asset</label>
         <input list="symbols" name="symbol" placeholder="XAU/USD" value="${esc(v.symbol)}" required />
-        <datalist id="symbols">
-          <option value="XAU/USD"></option><option value="EUR/USD"></option><option value="GBP/JPY"></option>
-          <option value="BTC/USD"></option><option value="BTC/USDT"></option><option value="ETH/USD"></option><option value="ETH/USDT"></option>
-        </datalist>
+        <datalist id="symbols"><option value="XAU/USD"></option><option value="EUR/USD"></option><option value="GBP/JPY"></option><option value="BTC/USD"></option><option value="BTC/USDT"></option><option value="ETH/USD"></option><option value="ETH/USDT"></option></datalist>
         <div class="lot-help">Choose a tracked market or type your own</div>
       </div>
-      <div class="field"><label>Direction</label>
-        <select name="direction">
-          <option value="long" ${v.direction==="long"?"selected":""}>Long</option>
-          <option value="short" ${v.direction==="short"?"selected":""}>Short</option>
-        </select>
-      </div>
+      <div class="field"><label>Direction</label><select name="direction"><option value="long" ${v.direction==="long"?"selected":""}>Long</option><option value="short" ${v.direction==="short"?"selected":""}>Short</option></select></div>
       <div class="field"><label>Date</label><input type="date" name="date" value="${esc(v.date)}" required /></div>
       <div class="field"><label>Entry</label><input type="number" step="any" name="entry" placeholder="0.00" value="${esc(v.entry)}" /></div>
       <div class="field"><label>Exit</label><input type="number" step="any" name="exit" placeholder="0.00" value="${esc(v.exit)}" /></div>
-      <div class="field">
-        <label>Lot Size</label>
-        <input list="lotSizes" type="number" step="any" min="0.01" name="size" placeholder="0.01" value="${esc(v.size)}" />
-        <datalist id="lotSizes">
-          <option value="0.01"></option><option value="0.10"></option><option value="1"></option>
-        </datalist>
-        <div class="quick-values">
-          <button type="button" data-lot="0.01">0.01</button>
-          <button type="button" data-lot="0.10">0.10</button>
-          <button type="button" data-lot="1">1.00</button>
-        </div>
-        <div class="lot-help">Typical forex sizes • type any custom size</div>
-      </div>
-      <div class="field">
-        <label>Session</label>
-        <input list="sessions" name="session" placeholder="London" value="${esc(v.session)}" />
-        <datalist id="sessions">
-          <option value="Asian"></option><option value="London"></option><option value="New York"></option><option value="Daily"></option>
-        </datalist>
-        <div class="session-help">Choose a session or type your own</div>
-      </div>
+      <div class="field"><label>Lot Size</label><input list="lotSizes" type="number" step="any" min="0.01" name="size" placeholder="0.01" value="${esc(v.size)}" /><datalist id="lotSizes"><option value="0.01"></option><option value="0.10"></option><option value="1"></option></datalist><div class="quick-values"><button type="button" data-lot="0.01">0.01</button><button type="button" data-lot="0.10">0.10</button><button type="button" data-lot="1">1.00</button></div><div class="lot-help">Typical forex sizes • type any custom size</div></div>
+      <div class="field"><label>Session</label><input list="sessions" name="session" placeholder="London" value="${esc(v.session)}" /><datalist id="sessions"><option value="Asian"></option><option value="London"></option><option value="New York"></option><option value="Daily"></option></datalist><div class="session-help">Choose a session or type your own</div></div>
       <div class="field"><label>Risk (R)</label><input name="risk" placeholder="1R" value="${esc(v.risk)}" /></div>
       <div class="field"><label>Strategy</label><input name="strategy" placeholder="News, Breakout..." value="${esc(v.strategy)}" /></div>
       <div class="field"><label>P&amp;L ($)</label><input type="number" step="any" name="pnl" placeholder="Auto-calculated" value="${esc(v.pnl)}" required /><div class="pnl-help" data-pnl-hint>Enter symbol, entry, exit and lot size.</div></div>
@@ -1364,18 +1477,10 @@ function fieldsTemplate(t){
     <div class="psych-box">
       <div class="psych-title">🧠 Trading Psychology — optional</div>
       <div class="psych-grid">
-        <div class="field"><label>Emotion before</label>
-          <select name="emotionBefore"><option value="">Choose</option>${["Calm","Confident","Excited","Fearful","Angry","FOMO","Revenge"].map(x=>`<option value="${x}" ${v.psychology?.emotionBefore===x?"selected":""}>${x}</option>`).join("")}</select>
-        </div>
-        <div class="field"><label>Emotion after</label>
-          <select name="emotionAfter"><option value="">Choose</option>${["Calm","Satisfied","Excited","Disappointed","Angry","Anxious","Regretful"].map(x=>`<option value="${x}" ${v.psychology?.emotionAfter===x?"selected":""}>${x}</option>`).join("")}</select>
-        </div>
-        <div class="field"><label>Process</label>
-          <select name="planFollowed"><option value="">Choose</option><option value="yes" ${v.psychology?.planFollowed==="yes"?"selected":""}>Followed my plan</option><option value="no" ${v.psychology?.planFollowed==="no"?"selected":""}>Broke my plan</option></select>
-        </div>
-        <div class="field"><label>Stop loss</label>
-          <select name="slDefined"><option value="">Choose</option><option value="yes" ${v.psychology?.slDefined==="yes"?"selected":""}>Defined before entry</option><option value="no" ${v.psychology?.slDefined==="no"?"selected":""}>Not defined</option></select>
-        </div>
+        <div class="field"><label>Emotion before</label><select name="emotionBefore"><option value="">Choose</option>${["Calm","Confident","Excited","Fearful","Angry","FOMO","Revenge"].map(x=>`<option value="${x}" ${v.psychology?.emotionBefore===x?"selected":""}>${x}</option>`).join("")}</select></div>
+        <div class="field"><label>Emotion after</label><select name="emotionAfter"><option value="">Choose</option>${["Calm","Satisfied","Excited","Disappointed","Angry","Anxious","Regretful"].map(x=>`<option value="${x}" ${v.psychology?.emotionAfter===x?"selected":""}>${x}</option>`).join("")}</select></div>
+        <div class="field"><label>Process</label><select name="planFollowed"><option value="">Choose</option><option value="yes" ${v.psychology?.planFollowed==="yes"?"selected":""}>Followed my plan</option><option value="no" ${v.psychology?.planFollowed==="no"?"selected":""}>Broke my plan</option></select></div>
+        <div class="field"><label>Stop loss</label><select name="slDefined"><option value="">Choose</option><option value="yes" ${v.psychology?.slDefined==="yes"?"selected":""}>Defined before entry</option><option value="no" ${v.psychology?.slDefined==="no"?"selected":""}>Not defined</option></select></div>
         <div class="field"><label>FOMO?</label><select name="fomo"><option value="no" ${!v.psychology?.fomo?"selected":""}>No</option><option value="yes" ${v.psychology?.fomo?"selected":""}>Yes</option></select></div>
         <div class="field"><label>Revenge trade?</label><select name="revenge"><option value="no" ${!v.psychology?.revenge?"selected":""}>No</option><option value="yes" ${v.psychology?.revenge?"selected":""}>Yes</option></select></div>
         <div class="field span2"><label>Why did I take this trade?</label><textarea name="reason" rows="2" placeholder="Setup, market structure, confirmation...">${esc(v.psychology?.reason||"")}</textarea></div>
@@ -1383,10 +1488,7 @@ function fieldsTemplate(t){
       </div>
       <div class="psych-hint">The psychology section is optional. It never blocks saving a trade.</div>
     </div>
-    <div class="form-actions">
-      <button type="button" class="btn-ghost" data-cancel>Cancel</button>
-      <button type="submit" class="btn btn-primary">${t ? "Save changes" : "Add trade"}</button>
-    </div>
+    <div class="form-actions"><button type="button" class="btn-ghost" data-cancel>Cancel</button><button type="submit" class="btn btn-primary">${t ? "Save changes" : "Add trade"}</button></div>
   `;
 }
 
@@ -1396,13 +1498,8 @@ function attachForm(container, initial, onSave, onCancel){
   form.innerHTML = fieldsTemplate(initial);
   container.innerHTML = "";
   container.appendChild(form);
-
   form.querySelector("[data-cancel]").addEventListener("click", onCancel);
-  form.querySelectorAll("[data-lot]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      form.querySelector('[name="size"]').value = btn.dataset.lot;
-    });
-  });
+  form.querySelectorAll("[data-lot]").forEach(btn => btn.addEventListener("click", () => { form.querySelector('[name="size"]').value = btn.dataset.lot; }));
   ["symbol","direction","entry","exit","size"].forEach(name => {
     form.querySelector(`[name="${name}"]`).addEventListener("input", () => updateAutoPnl(form));
     form.querySelector(`[name="${name}"]`).addEventListener("change", () => updateAutoPnl(form));
@@ -1410,31 +1507,18 @@ function attachForm(container, initial, onSave, onCancel){
   updateAutoPnl(form);
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const fd = new FormData(form);
-    const val = (k) => fd.get(k);
+    const fd = new FormData(form); const val = k => fd.get(k);
     const symbol = val("symbol"), date = val("date"), pnl = val("pnl");
     if(!symbol || !date || pnl === "") return;
     onSave({
-      id: initial ? initial.id : uid(),
-      symbol, date,
-      direction: val("direction"),
-      entry: val("entry") === "" ? "" : Number(val("entry")),
-      exit: val("exit") === "" ? "" : Number(val("exit")),
-      size: val("size") === "" ? "" : Number(val("size")),
-      session: val("session"),
-      risk: val("risk"),
-      strategy: val("strategy"),
-      notes: val("notes"),
-      pnl: Number(pnl),
+      id: initial ? initial.id : uid(), symbol, date, direction: val("direction"),
+      entry: val("entry")===""?"":Number(val("entry")), exit: val("exit")===""?"":Number(val("exit")),
+      size: val("size")===""?"":Number(val("size")), session: val("session"), risk: val("risk"), strategy: val("strategy"), notes: val("notes"), pnl:Number(pnl),
       psychology:{
-        emotionBefore: val("emotionBefore") || "",
-        emotionAfter: val("emotionAfter") || "",
-        fomo: val("fomo") === "yes",
-        revenge: val("revenge") === "yes",
-        planFollowed: val("planFollowed") || "",
-        slDefined: val("slDefined") || "",
-        reason: val("reason") || "",
-        review: val("review") || ""
+        emotionBefore: val("emotionBefore") || "", emotionAfter: val("emotionAfter") || "",
+        planFollowed: val("planFollowed") || "", slDefined: val("slDefined") || "",
+        fomo: val("fomo")==="yes", revenge: val("revenge")==="yes",
+        reason: val("reason") || "", review: val("review") || ""
       }
     });
   });
@@ -1563,11 +1647,7 @@ $("#importInput").addEventListener("change", async (e) => {
     const imported = JSON.parse(await file.text());
     const importedTrades=Array.isArray(imported)?imported:imported?.trades;
     if(!Array.isArray(importedTrades)) throw new Error("Invalid backup");
-    const cleaned = importedTrades.map(t => {
-      const auto = calculatePnl(t.symbol,t.direction,t.entry,t.exit,t.size);
-      return {...t, id:t.id || uid(), session:t.session || "", psychology:t.psychology || {},
-        pnl:auto !== null ? Number(auto.toFixed(2)) : Number(t.pnl || 0)};
-    });
+    const cleaned = importedTrades.map(t => ({...t, id:t.id || uid(), session:t.session || "", pnl:Number(t.pnl || 0)}));
     const replace = confirm("Import " + cleaned.length + " trades? OK = replace current journal, Cancel = add to current trades.");
     trades = replace ? cleaned : [...cleaned, ...trades.filter(old => !cleaned.some(x => x.id === old.id))];
     if(imported && !Array.isArray(imported) && imported.portfolio){
@@ -1781,7 +1861,43 @@ if(homeTradesEl){
 }
 
 setupPortfolio();
-loadTrades();
+renderProfileCard();
+
+document.getElementById("authModeToggle")?.addEventListener("click", () => setAuthMode(authMode === "signin" ? "signup" : "signin"));
+document.getElementById("authForm")?.addEventListener("submit", handleAuthSubmit);
+
+supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+  if(session?.user){
+    currentUser = session.user;
+    showAuthGate(false);
+    renderProfileCard();
+    try{
+      await ensureProfile(currentUser);
+      if(!Array.isArray(trades) || trades.length === 0){
+        await startCloudJournal();
+      }
+    }catch(err){
+      console.error("Post-login setup error:", err);
+    }
+  }
+});
+
+(async function initCloudMode(){
+  try{
+    const signedIn = await bootCloudSession();
+    if(signedIn){
+      await startCloudJournal();
+    }else{
+      trades = [];
+      render();
+    }
+  }catch(e){
+    console.error(e);
+    showAuthGate(true);
+    authMessage("Could not connect to the account service. Please refresh and try again.", "error");
+  }
+})();
+
 </script>
 <script>
 (() => {
@@ -1811,5 +1927,6 @@ loadTrades();
 })();
 </script>
 <button class="fab-add" id="fabAdd" type="button" aria-label="Add trade">+</button>
+
 </body>
 </html>
